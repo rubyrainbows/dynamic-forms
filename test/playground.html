@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Playground</title>
+</head>
+<body>
+<div id="mocha"></div>
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../dist/dynamic_forms.js"></script>
+
+<form>
+    Foo:
+    <br/>
+    <div data-dynamic-form>
+        <div data-dynamic-form-template="foo">
+            <label>
+                <input type="text" name="foo[ID][foo]" data-dynamic-form-input="ID"/>
+                <input type="text" name="foo[ID][bar]" data-dynamic-form-input="ID"/>
+                <button type="button" data-dynamic-form-add>Add</button>
+                <button type="button" data-dynamic-form-remove>Remove</button>
+            </label>
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+    Bar:
+    <br/>
+
+    <div data-dynamic-form>
+        <div data-dynamic-form-template="bar" data-dynamic-form-fill='{ "0": "foo", "1": "bar" }'>
+            <label>
+                <input type="text" name="bar[ID]" data-dynamic-form-input="ID"/>
+                <button type="button" data-dynamic-form-add>Add</button>
+                <button type="button" data-dynamic-form-remove>Remove</button>
+            </label>
+        </div>
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        var dynamicForms = new DynamicForms();
+        dynamicForms.automaticallySetupForm();
+    });
+</script>
+</body>
+</html>
