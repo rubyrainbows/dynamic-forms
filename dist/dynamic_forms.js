@@ -33,7 +33,6 @@ var DynamicForms = function () {
             } else {
                 for (var prop in fillData) {
                     if (fillData.hasOwnProperty(prop)) {
-                        console.log(prop);
                         this.createNewRow(parent, element, prop, fillData[prop]);
                     }
                 }
@@ -54,6 +53,8 @@ var DynamicForms = function () {
             } else {
                 this.templates[templateId]++;
             }
+            var templateIdNumber = this.templates[templateId];
+
             cloned.removeAttr('data-dynamic-form-template');
             cloned.removeAttr('data-dynamic-form-fill');
 
@@ -92,7 +93,7 @@ var DynamicForms = function () {
 
             cloned.find('[data-dynamic-form-add]').each(function (addKey, addValue) {
                 var button = $(addValue);
-                button.attr('data-dynamic-form-add', this.getDataTagForButton(templateId, 'add'));
+                button.attr('data-dynamic-form-add', DynamicForms.getDataTagForButton(templateId, 'add', templateIdNumber));
                 button.click(function () {
                     this.createNewRow(parent, element);
                 }.bind(this));
@@ -100,22 +101,36 @@ var DynamicForms = function () {
 
             cloned.find('[data-dynamic-form-remove]').each(function (addKey, addValue) {
                 var button = $(addValue);
-                button.attr('data-dynamic-form-remove', this.getDataTagForButton(templateId, 'remove'));
+                button.attr('data-dynamic-form-remove', DynamicForms.getDataTagForButton(templateId, 'remove', templateIdNumber));
                 button.click(function () {
                     cloned.remove();
                     DynamicForms.disableTopRemoveButton(parent);
+                    DynamicForms.updateRemoveField(parent, templateId, index);
                 }.bind(this));
             }.bind(this));
 
             cloned.show();
             cloned.appendTo(parent);
         }
+    }], [{
+        key: 'updateRemoveField',
+        value: function updateRemoveField(parent, templateId, index) {
+            if (!isNaN(parseInt(index)) && isFinite(index)) {
+                if (parent.find("input[type='hidden']").length === 0) {
+                    parent.prepend('<input type="hidden" name="remove_' + templateId + '" value="' + index + '" />');
+                } else {
+                    var removeField = $(parent.find("input[type='hidden']")[0]);
+                    var value = removeField.val();
+                    removeField.val(value + "," + index);
+                }
+            }
+        }
     }, {
         key: 'getDataTagForButton',
-        value: function getDataTagForButton(templateId, type) {
-            return templateId + '-' + type + '-' + this.templates[templateId];
+        value: function getDataTagForButton(templateId, type, templateIdNumber) {
+            return templateId + '-' + type + '-' + templateIdNumber;
         }
-    }], [{
+    }, {
         key: 'disableTopRemoveButton',
         value: function disableTopRemoveButton(parent) {
             parent.find('[data-dynamic-form-remove]').first().hide();
