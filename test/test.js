@@ -73,11 +73,26 @@ describe('#dynamic forms', function () {
     });
 
     it('should allow for fill', function () {
-        var template = createTemplate({0: "foo", 1: "bar"});
+        var template = createTemplate('{ "0": "foo", "1": "bar" }');
         var dynamicForms = dynamicForm();
         expect($("input[name='foo[0][bar]']").length).to.eq(1);
         expect($("input[name='foo[1][bar]']").length).to.eq(1);
         expect($("input[name='foo[a][bar]']").length).to.eq(0);
+        cleanupTemplate(template);
+    });
+
+    it('should allow for fill', function () {
+        var template = createTemplate('{ "0": "foo", "1": "bar"}');
+        var dynamicForms = dynamicForm();
+        expect($("input[type='hidden']").length).to.eq(0);
+        $("button[data-dynamic-form-add='foo-add-0']")[0].click();
+        $("button[data-dynamic-form-remove='foo-remove-2']")[0].click();
+        expect($("input[type='hidden']").length).to.eq(0);
+        $("button[data-dynamic-form-remove='foo-remove-0']")[0].click();
+        expect($("input[type='hidden']").length).to.eq(1);
+        expect($("input[type='hidden']")[0].value).to.eq('0');
+        $("button[data-dynamic-form-remove='foo-remove-1']")[0].click();
+        expect($("input[type='hidden']")[0].value).to.eq('0,1');
         cleanupTemplate(template);
     });
 });
