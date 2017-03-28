@@ -77,7 +77,8 @@ describe('#dynamic forms', function () {
         var dynamicForms = dynamicForm();
         expect($("input[name='foo[0][bar]']").length).to.eq(1);
         expect($("input[name='foo[1][bar]']").length).to.eq(1);
-        expect($("input[name='foo[a][bar]']").length).to.eq(0);
+        expect($("input[name='foo[a][bar]']").length).to.eq(1);
+        expect($("input[name='foo[b][bar]']").length).to.eq(0);
         cleanupTemplate(template);
     });
 

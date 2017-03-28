@@ -28,9 +28,10 @@ class DynamicForms {
                     this.createNewRow(parent, element, prop, fillData[prop]);
                 }
             }
+            this.createNewRow(parent, element);
         }
 
-        DynamicForms.disableTopRemoveButton(parent);
+        DynamicForms.disableBottomRemoveButton(parent);
     }
 
     createNewRow(parent, element, index = undefined, value = undefined) {
@@ -85,6 +86,7 @@ class DynamicForms {
             button.attr('data-dynamic-form-add', DynamicForms.getDataTagForButton(templateId, 'add', templateIdNumber));
             button.click(function () {
                 this.createNewRow(parent, element);
+                DynamicForms.disableBottomRemoveButton(parent);
             }.bind(this));
         }.bind(this));
 
@@ -93,7 +95,7 @@ class DynamicForms {
             button.attr('data-dynamic-form-remove', DynamicForms.getDataTagForButton(templateId, 'remove', templateIdNumber));
             button.click(function () {
                 cloned.remove();
-                DynamicForms.disableTopRemoveButton(parent);
+                DynamicForms.disableBottomRemoveButton(parent);
                 DynamicForms.updateRemoveField(parent, templateId, index);
             }.bind(this));
         }.bind(this));
@@ -118,8 +120,11 @@ class DynamicForms {
         return templateId + '-' + type + '-' + templateIdNumber;
     }
 
-    static disableTopRemoveButton(parent) {
-        parent.find('[data-dynamic-form-remove]').first().hide();
+    static disableBottomRemoveButton(parent) {
+        parent.find('[data-dynamic-form-remove]').each( function (key, value) {
+           $(value).show();
+        });
+        parent.find('[data-dynamic-form-remove]').last().hide();
     }
 
     static numToChar(i) {
