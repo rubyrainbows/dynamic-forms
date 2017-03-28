@@ -83,6 +83,12 @@ See `test/playground.html` for a working example.
         </div>
     </div>
 </form>
+<script>
+    $(document).ready(function () {
+        var dynamicForms = new DynamicForms();
+        dynamicForms.automaticallySetupForm();
+    });
+</script>
 ...
 ```
 **Usage Notes:**
@@ -99,3 +105,38 @@ See `test/playground.html` for a working example.
 * If you supply data with `data-dynamic-form-fill`, the form will automatically create new rows with the data.
 * Any supplied rows with `data-dynamic-form-fill` will be added to the form with their id.
 * Any new rows will be given an id by a base 26 alphabet system: a,b,c,...aa,ab,ac....
+
+
+### Adding an observer
+
+If you ever want to capture events such as creating/removing a new row, you will need to create an observer.
+
+Here is an example:
+
+```html
+...
+<script>
+    function Observer() {
+        this.elementsCreated = 0;
+        this.elementsRemoved = 0;
+    }
+
+    Observer.prototype.rowWasCreated = function (element) {
+        this.elementsCreated++;
+    };
+
+    Observer.prototype.rowWasRemoved = function (element) {
+        this.elementsRemoved++;
+    };
+    
+    $(document).ready(function () {
+        var dynamicForms = new DynamicForms();
+        var observer = new Observer();
+        dynamicForms.automaticallySetupForm();
+        dynamicForms.addObserver(observer);
+    });
+</script>
+...
+```
+* Whenever a row is created, the function `rowWasCreated` will be called.
+* Whenever a row is removed, the function `rowWasRemoved` will be called.

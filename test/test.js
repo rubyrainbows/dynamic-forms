@@ -55,6 +55,8 @@ function cleanupTemplate(el) {
 function dynamicForm() {
     var dynamicForm = new DynamicForms();
     dynamicForm.automaticallySetupForm();
+
+    return dynamicForm;
 }
 
 describe('#dynamic forms', function () {
@@ -128,6 +130,39 @@ describe('#dynamic forms', function () {
         expect($("input[name='foo[0][bar]']")[0].value).to.eq('bar 0');
         expect($("input[name='foo[1][foo]']")[0].value).to.eq('foo 1');
         expect($("input[name='foo[1][bar]']")[0].value).to.eq('bar 1');
+        cleanupTemplate(template);
+    });
+
+    it('should allow for observers', function () {
+        var template = createTemplate();
+        var dynamicForms = dynamicForm();
+
+        function Observer() {
+            this.elementsCreated = 0;
+            this.elementsRemoved = 0;
+        }
+
+        Observer.prototype.rowWasCreated = function () {
+            this.elementsCreated++;
+        };
+
+        Observer.prototype.rowWasRemoved = function () {
+            this.elementsRemoved++;
+        };
+        var observer = new Observer();
+        dynamicForms.addObserver(observer);
+        expect($("input[name='foo[a][bar]']").length).to.eq(1);
+        expect($("input[name='foo[b][bar]']").length).to.eq(0);
+        expect(observer.elementsCreated).to.eq(0);
+        expect(observer.elementsRemoved).to.eq(0);
+        $("button[data-dynamic-form-add='foo-add-0']")[0].click();
+        expect(observer.elementsCreated).to.eq(1);
+        expect(observer.elementsRemoved).to.eq(0);
+        expect($("input[name='foo[b][bar]']").length).to.eq(1);
+        $("button[data-dynamic-form-remove='foo-remove-1']")[0].click();
+        expect(observer.elementsCreated).to.eq(1);
+        expect(observer.elementsRemoved).to.eq(1);
+        expect($("input[name='foo[b][bar]']").length).to.eq(0);
         cleanupTemplate(template);
     });
 });

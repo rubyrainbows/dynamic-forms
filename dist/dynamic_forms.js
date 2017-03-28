@@ -6,6 +6,22 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var DynamicFormObserver = function () {
+    function DynamicFormObserver() {
+        _classCallCheck(this, DynamicFormObserver);
+    }
+
+    _createClass(DynamicFormObserver, [{
+        key: 'rowWasCreated',
+        value: function rowWasCreated(element) {}
+    }, {
+        key: 'rowWasRemoved',
+        value: function rowWasRemoved(element) {}
+    }]);
+
+    return DynamicFormObserver;
+}();
+
 var DynamicForms = function () {
     function DynamicForms() {
         _classCallCheck(this, DynamicForms);
@@ -13,9 +29,69 @@ var DynamicForms = function () {
         this.dynamic_elements = {};
         this.elements = {};
         this.templates = {};
+        this.observers = [];
     }
 
+    /**
+     * Adds an observer.
+     *
+     * The observer should have the following functions:
+     * * rowWasCreated
+     * * rowWasRemoved
+     *
+     * @param observer
+     */
+
+
     _createClass(DynamicForms, [{
+        key: 'addObserver',
+        value: function addObserver(observer) {
+            this.observers.push(observer);
+        }
+
+        /**
+         * Used to notify the observers that a row was removed.
+         *
+         * @param element The element that was removed.
+         */
+
+    }, {
+        key: 'rowWasRemoved',
+        value: function rowWasRemoved(element) {
+            for (var i in this.observers) {
+                var observer = this.observers[i];
+                if (observer.rowWasRemoved !== undefined && typeof observer.rowWasRemoved === 'function') {
+                    observer.rowWasRemoved(element);
+                } else {
+                    console.log('[-] DynamicForms: observer function missing "rowWasRemoved"');
+                }
+            }
+        }
+
+        /**
+         * Used to notify the observers that a row was created.
+         *
+         * @param element The element that was created.
+         */
+
+    }, {
+        key: 'rowWasCreated',
+        value: function rowWasCreated(element) {
+            for (var i in this.observers) {
+                var observer = this.observers[i];
+                if (observer.rowWasCreated !== undefined && typeof observer.rowWasCreated === 'function') {
+                    observer.rowWasCreated(element);
+                } else {
+                    console.log('[-] DynamicForms: observer function missing "rowWasCreated"');
+                }
+            }
+        }
+
+        /**
+         * Automatically sets-up a form, searching the dom for any compatible divs.
+         */
+
+    }, {
         key: 'automaticallySetupForm',
         value: function automaticallySetupForm() {
             $("[data-dynamic-form] [data-dynamic-form-template]").each(function (key, value) {
@@ -24,6 +100,14 @@ var DynamicForms = function () {
                 this.setupForm(parent, element);
             }.bind(this));
         }
+
+        /**
+         * Sets up a form to be made dynamic.
+         *
+         * @param parent The parent div.
+         * @param element The form div.
+         */
+
     }, {
         key: 'setupForm',
         value: function setupForm(parent, element) {
@@ -45,6 +129,16 @@ var DynamicForms = function () {
 
             DynamicForms.disableBottomRemoveButton(parent);
         }
+
+        /**
+         * Creates a new row in the form.
+         *
+         * @param parent The parent div.
+         * @param element The template element.
+         * @param index The index of the new element (used for fill).
+         * @param value The value of the new element (used for fill).
+         */
+
     }, {
         key: 'createNewRow',
         value: function createNewRow(parent, element) {
@@ -119,12 +213,23 @@ var DynamicForms = function () {
                     cloned.remove();
                     DynamicForms.disableBottomRemoveButton(parent);
                     DynamicForms.updateRemoveField(parent, templateId, index);
+                    this.rowWasRemoved(cloned);
                 }.bind(this));
             }.bind(this));
 
             cloned.show();
             cloned.appendTo(parent);
+            this.rowWasCreated(cloned);
         }
+
+        /**
+         * Makes a hidden field of any removed row, meant to keep track of elements already added to the database.
+         *
+         * @param parent The parent div.
+         * @param templateId The id of the template
+         * @param index The index of the element.
+         */
+
     }], [{
         key: 'updateRemoveField',
         value: function updateRemoveField(parent, templateId, index) {
@@ -138,11 +243,29 @@ var DynamicForms = function () {
                 }
             }
         }
+
+        /**
+         * Generates the data tag string to be used for buttons.
+         *
+         * @param templateId The template id.
+         * @param type The type of button.
+         * @param templateIdNumber The index of the element within a template.
+         *
+         * @returns {string}
+         */
+
     }, {
         key: 'getDataTagForButton',
         value: function getDataTagForButton(templateId, type, templateIdNumber) {
             return templateId + '-' + type + '-' + templateIdNumber;
         }
+
+        /**
+         * Hides the bottom remove button, to ensure that there is always a row.
+         *
+         * @param parent
+         */
+
     }, {
         key: 'disableBottomRemoveButton',
         value: function disableBottomRemoveButton(parent) {
@@ -151,6 +274,22 @@ var DynamicForms = function () {
             });
             parent.find('[data-dynamic-form-remove]').last().hide();
         }
+
+        /**
+         * Returns an index converted to base 26 letters.
+         *
+         * Examples:
+         * * DynamicForms.numToChar(0) == 'a'
+         * * DynamicForms.numToChar(1) == 'b'
+         * * DynamicForms.numToChar(25) == 'z'
+         * * DynamicForms.numToChar(26) == 'aa'
+         * * DynamicForms.numToChar(702) == 'aaaa'
+         *
+         * @param i The number to convert.
+         *
+         * @returns {string}
+         */
+
     }, {
         key: 'numToChar',
         value: function numToChar(i) {
@@ -175,3 +314,4 @@ var DynamicForms = function () {
 }();
 
 window.DynamicForms = DynamicForms;
+window.DynamicFormObserver = DynamicFormObserver;

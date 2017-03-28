@@ -1,6 +1,6 @@
 {
   "name": "@rubyrainbows/dynamic-forms",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Dynamic form helpers in javascript",
   "scripts": {
     "test": "node_modules/karma/bin/karma start --single-run",
