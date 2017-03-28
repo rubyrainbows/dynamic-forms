@@ -8,7 +8,31 @@ function createTemplate(fill = undefined) {
 
     $(el).html($(`<div data-dynamic-form-template="foo">
             <label>
-                <input type="text" name="foo[ID][bar]" data-dynamic-form-input="ID" />
+                <input type="text" name="foo[ID][bar]" data-dynamic-form-input-id-template="ID" />
+                <button type="button" data-dynamic-form-add>Add</button>
+                <button type="button" data-dynamic-form-remove>Remove</button>
+            </label>
+        </div>`));
+    document.body.appendChild(el);
+
+    if (fill !== undefined) {
+        $(el).find('[data-dynamic-form-template]').each(function (key, value) {
+            $(value).attr('data-dynamic-form-fill', fill);
+        });
+    }
+
+    return $(el);
+}
+
+
+function createTemplateMulti(fill = undefined) {
+    var el = document.createElement('div');
+    el.setAttribute('data-dynamic-form', '');
+
+    $(el).html($(`<div data-dynamic-form-template="foo">
+            <label>
+                <input type="text" name="foo[ID][foo]" data-dynamic-form-input-id-template="ID" data-dynamic-form-input-name="foo" />
+                <input type="text" name="foo[ID][bar]" data-dynamic-form-input-id-template="ID" data-dynamic-form-input-name="bar" />
                 <button type="button" data-dynamic-form-add>Add</button>
                 <button type="button" data-dynamic-form-remove>Remove</button>
             </label>
@@ -82,7 +106,7 @@ describe('#dynamic forms', function () {
         cleanupTemplate(template);
     });
 
-    it('should allow for fill', function () {
+    it('should remove fields and update hidden remove field', function () {
         var template = createTemplate('{ "0": "foo", "1": "bar"}');
         var dynamicForms = dynamicForm();
         expect($("input[type='hidden']").length).to.eq(0);
@@ -94,6 +118,16 @@ describe('#dynamic forms', function () {
         expect($("input[type='hidden']")[0].value).to.eq('0');
         $("button[data-dynamic-form-remove='foo-remove-1']")[0].click();
         expect($("input[type='hidden']")[0].value).to.eq('0,1');
+        cleanupTemplate(template);
+    });
+
+    it('should allow for fill multi-fields', function () {
+        var template = createTemplateMulti('{ "0": {"foo": "foo 0", "bar": "bar 0"}, "1": {"foo": "foo 1", "bar": "bar 1"} }');
+        var dynamicForms = dynamicForm();
+        expect($("input[name='foo[0][foo]']")[0].value).to.eq('foo 0');
+        expect($("input[name='foo[0][bar]']")[0].value).to.eq('bar 0');
+        expect($("input[name='foo[1][foo]']")[0].value).to.eq('foo 1');
+        expect($("input[name='foo[1][bar]']")[0].value).to.eq('bar 1');
         cleanupTemplate(template);
     });
 });

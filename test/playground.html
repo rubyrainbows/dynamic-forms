@@ -10,13 +10,13 @@
 <script src="../dist/dynamic_forms.js"></script>
 
 <form>
-    Foo:
+    Single Input:
     <br/>
+
     <div data-dynamic-form>
-        <div data-dynamic-form-template="foo">
+        <div data-dynamic-form-template="single">
             <label>
-                <input type="text" name="foo[ID][foo]" data-dynamic-form-input="ID"/>
-                <input type="text" name="foo[ID][bar]" data-dynamic-form-input="ID"/>
+                <input type="text" name="single[ID]" data-dynamic-form-input-id-template="ID"/>
                 <button type="button" data-dynamic-form-add>Add</button>
                 <button type="button" data-dynamic-form-remove>Remove</button>
             </label>
@@ -25,13 +25,47 @@
 
     <br/>
     <br/>
-    Bar:
+    Multi Input:
+    <br/>
+    <div data-dynamic-form>
+        <div data-dynamic-form-template="multi">
+            <label>
+                <input type="text" name="multi[ID][foo]" data-dynamic-form-input-id-template="ID"/>
+                <input type="text" name="multi[ID][bar]" data-dynamic-form-input-id-template="ID"/>
+                <button type="button" data-dynamic-form-add>Add</button>
+                <button type="button" data-dynamic-form-remove>Remove</button>
+            </label>
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+    Single Input with Fill:
     <br/>
 
     <div data-dynamic-form>
-        <div data-dynamic-form-template="bar" data-dynamic-form-fill='{ "0": "foo", "1": "bar", "344": "foo-bar" }'>
+        <div data-dynamic-form-template="single_fill" data-dynamic-form-fill='{ "0": "foo", "1": "bar", "344": "foo-bar" }'>
             <label>
-                <input type="text" name="bar[ID]" data-dynamic-form-input="ID"/>
+                <input type="text" name="single_fill[ID]" data-dynamic-form-input-id-template="ID"/>
+                <button type="button" data-dynamic-form-add>Add</button>
+                <button type="button" data-dynamic-form-remove>Remove</button>
+            </label>
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+    Multi Input with Fill:
+    <br/>
+
+    <div data-dynamic-form>
+        <div data-dynamic-form-template="multi_fill"
+             data-dynamic-form-fill='{ "0": {"foo": "foo 0", "bar": "bar 0"}, "1": {"foo": "foo 1", "bar": "bar 1"} }'>
+            <label>
+                <input type="text" name="multi_fill[ID][foo]" data-dynamic-form-input-id-template="ID"
+                       data-dynamic-form-input-name="foo"/>
+                <input type="text" name="multi_fill[ID][bar]" data-dynamic-form-input-id-template="ID"
+                       data-dynamic-form-input-name="bar"/>
                 <button type="button" data-dynamic-form-add>Add</button>
                 <button type="button" data-dynamic-form-remove>Remove</button>
             </label>

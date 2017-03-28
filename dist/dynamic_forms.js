@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -30,12 +32,14 @@ var DynamicForms = function () {
 
             if (fillData === undefined) {
                 this.createNewRow(parent, element);
-            } else {
+            } else if (typeof fillData !== 'string') {
                 for (var prop in fillData) {
                     if (fillData.hasOwnProperty(prop)) {
                         this.createNewRow(parent, element, prop, fillData[prop]);
                     }
                 }
+                this.createNewRow(parent, element);
+            } else {
                 this.createNewRow(parent, element);
             }
 
@@ -49,25 +53,32 @@ var DynamicForms = function () {
 
             var cloned = element.clone();
             var templateId = element.data('dynamic-form-template');
+
             if (this.templates[templateId] === undefined) {
                 this.templates[templateId] = 0;
             } else {
                 this.templates[templateId]++;
             }
+
             var templateIdNumber = this.templates[templateId];
 
             cloned.removeAttr('data-dynamic-form-template');
             cloned.removeAttr('data-dynamic-form-fill');
 
             var isFirst = void 0;
-            cloned.find("[data-dynamic-form-input]").each(function (inputKey, inputValue) {
+            cloned.find("[data-dynamic-form-input-id-template]").each(function (inputKey, inputValue) {
                 var inputElement = $(inputValue);
                 var name = inputElement.attr('name');
                 isFirst = this.dynamic_elements[name] === undefined;
-                var id = inputElement.data('dynamic-form-input');
+                var id = inputElement.data('dynamic-form-input-id-template');
 
                 if (value !== undefined) {
-                    inputElement.val(value);
+                    var dynamicName = inputElement.data('dynamic-form-input-name');
+                    if (typeof value === 'string') {
+                        inputElement.val(value);
+                    } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value.hasOwnProperty(dynamicName)) {
+                        inputElement.val(value[dynamicName]);
+                    }
                 }
 
                 var inputName = void 0;

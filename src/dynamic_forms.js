@@ -22,12 +22,14 @@ class DynamicForms {
 
         if (fillData === undefined) {
             this.createNewRow(parent, element);
-        } else {
+        } else if (typeof fillData !== 'string') {
             for (let prop in fillData) {
                 if (fillData.hasOwnProperty(prop)) {
                     this.createNewRow(parent, element, prop, fillData[prop]);
                 }
             }
+            this.createNewRow(parent, element);
+        } else {
             this.createNewRow(parent, element);
         }
 
@@ -37,25 +39,32 @@ class DynamicForms {
     createNewRow(parent, element, index = undefined, value = undefined) {
         let cloned = element.clone();
         let templateId = element.data('dynamic-form-template');
+
         if (this.templates[templateId] === undefined) {
             this.templates[templateId] = 0;
         } else {
             this.templates[templateId]++;
         }
+
         let templateIdNumber = this.templates[templateId];
 
         cloned.removeAttr('data-dynamic-form-template');
         cloned.removeAttr('data-dynamic-form-fill');
 
         let isFirst;
-        cloned.find("[data-dynamic-form-input]").each(function (inputKey, inputValue) {
+        cloned.find("[data-dynamic-form-input-id-template]").each(function (inputKey, inputValue) {
             let inputElement = $(inputValue);
             let name = inputElement.attr('name');
             isFirst = (this.dynamic_elements[name] === undefined);
-            let id = inputElement.data('dynamic-form-input');
+            let id = inputElement.data('dynamic-form-input-id-template');
 
             if (value !== undefined) {
-                inputElement.val(value);
+                let dynamicName = inputElement.data('dynamic-form-input-name');
+                if (typeof value === 'string') {
+                    inputElement.val(value);
+                } else if (typeof value === 'object' && value.hasOwnProperty(dynamicName)) {
+                    inputElement.val(value[dynamicName]);
+                }
             }
 
             let inputName;
@@ -121,8 +130,8 @@ class DynamicForms {
     }
 
     static disableBottomRemoveButton(parent) {
-        parent.find('[data-dynamic-form-remove]').each( function (key, value) {
-           $(value).show();
+        parent.find('[data-dynamic-form-remove]').each(function (key, value) {
+            $(value).show();
         });
         parent.find('[data-dynamic-form-remove]').last().hide();
     }
@@ -143,7 +152,6 @@ class DynamicForms {
 
         return string;
     }
-
 }
 
 window.DynamicForms = DynamicForms;
