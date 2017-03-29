@@ -12,7 +12,6 @@ class DynamicForms {
 
     constructor() {
         this.dynamic_elements = {};
-        this.elements = {};
         this.templates = {};
         this.observers = [];
     }
@@ -147,14 +146,8 @@ class DynamicForms {
                 }
 
                 inputName = name.replace(id, DynamicForms.numToChar(this.dynamic_elements[name]));
-            } else if (index !== undefined) {
-                if (this.elements[name] === undefined) {
-                    this.elements[name] = 0;
-                } else {
-                    this.elements[name]++;
-                }
-
-                inputName = name.replace(id, this.elements[name]);
+            } else {
+                inputName = name.replace(id, index);
             }
 
             inputElement.attr('name', inputName);

@@ -27,7 +27,6 @@ var DynamicForms = function () {
         _classCallCheck(this, DynamicForms);
 
         this.dynamic_elements = {};
-        this.elements = {};
         this.templates = {};
         this.observers = [];
     }
@@ -184,14 +183,8 @@ var DynamicForms = function () {
                     }
 
                     inputName = name.replace(id, DynamicForms.numToChar(this.dynamic_elements[name]));
-                } else if (index !== undefined) {
-                    if (this.elements[name] === undefined) {
-                        this.elements[name] = 0;
-                    } else {
-                        this.elements[name]++;
-                    }
-
-                    inputName = name.replace(id, this.elements[name]);
+                } else {
+                    inputName = name.replace(id, index);
                 }
 
                 inputElement.attr('name', inputName);
@@ -261,14 +254,14 @@ var DynamicForms = function () {
         }
 
         /**
-         * Hides the bottom remove button, to ensure that there is always a row.
+         * Shows all but the bottom removed button, hides all but the bottom add button
          *
          * @param parent
          */
 
     }, {
         key: 'handleButtons',
-        value: function disableBottomRemoveButton(parent) {
+        value: function handleButtons(parent) {
             parent.find('[data-dynamic-form-add]').each(function (key, value) {
                 $(value).hide();
             });
