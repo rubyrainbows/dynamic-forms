@@ -17,7 +17,7 @@ Dynamic forms is a javascript library meant to help make normal HTML forms more 
 ```
 
 ## Example
-See `test/playground.html` for a working example.
+See [the playground](https://rubyrainbows.github.io/dynamic-forms/playground.html) for a working example.
 ```html
 ...
 <form>
