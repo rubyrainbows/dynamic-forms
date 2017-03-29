@@ -133,6 +133,17 @@ describe('#dynamic forms', function () {
         cleanupTemplate(template);
     });
 
+    it('should handle deep values', function () {
+        var deep = DynamicForms.deepValues({foo: {en: 'foo en', de: 'foo de'}});
+        expect(deep['foo.en']).to.eq('foo en');
+        expect(deep['foo.de']).to.eq('foo de');
+
+        var deeper = DynamicForms.deepValues({foo: {'translations': {en: 'foo en', de: 'foo de'}}});
+        expect(deeper['foo.translations.en']).to.eq('foo en');
+        expect(deeper['foo.translations.de']).to.eq('foo de');
+
+    });
+
     it('should allow for observers', function () {
         var template = createTemplate();
         var dynamicForms = dynamicForm();

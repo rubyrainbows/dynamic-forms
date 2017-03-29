@@ -109,6 +109,7 @@ class DynamicForms {
     createNewRow(parent, element, index = undefined, value = undefined) {
         let cloned = element.clone();
         let templateId = element.data('dynamic-form-template');
+        let parsedValue = DynamicForms.deepValues(value);
 
         if (this.templates[templateId] === undefined) {
             this.templates[templateId] = 0;
@@ -128,12 +129,12 @@ class DynamicForms {
             isFirst = (this.dynamic_elements[name] === undefined);
             let id = inputElement.data('dynamic-form-input-id-template');
 
-            if (value !== undefined) {
+            if (parsedValue !== undefined) {
                 let dynamicName = inputElement.data('dynamic-form-input-name');
-                if (typeof value === 'string') {
-                    inputElement.val(value);
-                } else if (typeof value === 'object' && value.hasOwnProperty(dynamicName)) {
-                    inputElement.val(value[dynamicName]);
+                if (typeof parsedValue === 'string') {
+                    inputElement.val(parsedValue);
+                } else if (typeof parsedValue === 'object' && parsedValue.hasOwnProperty(dynamicName)) {
+                    inputElement.val(parsedValue[dynamicName]);
                 }
             }
 
@@ -256,6 +257,45 @@ class DynamicForms {
         }
 
         return string;
+    }
+
+    /**
+     * This recursive function builds the deep value strings for use in filling process
+     *
+     * Examples:
+     *   * deepValues({foo: {en: 'foo en', de: 'foo de'}})
+     *      => {'foo.en': 'foo en', 'foo.de': 'foo de'}
+     *   * deepValues({foo: translations: {{en: 'foo en', de: 'foo de'}}})
+     *      => {'foo.translations.en': 'foo en', 'foo.translations.de': 'foo de'}
+     *
+     * @param deepValue
+     * @returns {*}
+     */
+    static deepValues(deepValue) {
+        if (deepValue === undefined || typeof deepValue === 'string') {
+            return deepValue;
+        }
+
+        let values = {};
+        for (let prop in deepValue) {
+            if (deepValue.hasOwnProperty(prop)) {
+                if (typeof deepValue[prop] === 'string') {
+                    values[prop] = deepValue[prop];
+                } else if (typeof deepValue[prop] === 'object') {
+                    let deeperValue = DynamicForms.deepValues(deepValue[prop]);
+                    let deeperValues = {};
+                    for (let deepProp in deeperValue) {
+                        if (deeperValue.hasOwnProperty(deepProp)) {
+                            let key = prop + '.' + deepProp;
+                            deeperValues[key] = deeperValue[deepProp];
+                        }
+                    }
+                    return deeperValues;
+                }
+            }
+        }
+
+        return values;
     }
 }
 

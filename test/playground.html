@@ -44,7 +44,8 @@
     <br/>
 
     <div data-dynamic-form>
-        <div data-dynamic-form-template="single_fill" data-dynamic-form-fill='{ "0": "foo", "1": "bar", "344": "foo-bar" }'>
+        <div data-dynamic-form-template="single_fill"
+             data-dynamic-form-fill='{ "0": "foo", "1": "bar", "344": "foo-bar" }'>
             <label>
                 <input type="text" name="single_fill[ID]" data-dynamic-form-input-id-template="ID"/>
                 <button type="button" data-dynamic-form-add>Add</button>
@@ -66,6 +67,25 @@
                        data-dynamic-form-input-name="foo"/>
                 <input type="text" name="multi_fill[ID][bar]" data-dynamic-form-input-id-template="ID"
                        data-dynamic-form-input-name="bar"/>
+                <button type="button" data-dynamic-form-add>Add</button>
+                <button type="button" data-dynamic-form-remove>Remove</button>
+            </label>
+        </div>
+    </div>
+
+    <br/>
+    <br/>
+    Single Deep Input with Fill:
+    <br/>
+
+    <div data-dynamic-form>
+        <div data-dynamic-form-template="single_deep_fill"
+             data-dynamic-form-fill='{ "0": {"translations": { "en": "bar en", "de": "bar de" } } }'>
+            <label>
+                <input type="text" name="single_deep_fill[ID][translations][en]"
+                       data-dynamic-form-input-id-template="ID" data-dynamic-form-input-name="translations.en"/>
+                <input type="text" name="single_deep_fill[ID][translations][de]"
+                       data-dynamic-form-input-id-template="ID" data-dynamic-form-input-name="translations.de"/>
                 <button type="button" data-dynamic-form-add>Add</button>
                 <button type="button" data-dynamic-form-remove>Remove</button>
             </label>

@@ -146,6 +146,7 @@ var DynamicForms = function () {
 
             var cloned = element.clone();
             var templateId = element.data('dynamic-form-template');
+            var parsedValue = DynamicForms.deepValues(value);
 
             if (this.templates[templateId] === undefined) {
                 this.templates[templateId] = 0;
@@ -165,12 +166,12 @@ var DynamicForms = function () {
                 isFirst = this.dynamic_elements[name] === undefined;
                 var id = inputElement.data('dynamic-form-input-id-template');
 
-                if (value !== undefined) {
+                if (parsedValue !== undefined) {
                     var dynamicName = inputElement.data('dynamic-form-input-name');
-                    if (typeof value === 'string') {
-                        inputElement.val(value);
-                    } else if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' && value.hasOwnProperty(dynamicName)) {
-                        inputElement.val(value[dynamicName]);
+                    if (typeof parsedValue === 'string') {
+                        inputElement.val(parsedValue);
+                    } else if ((typeof parsedValue === 'undefined' ? 'undefined' : _typeof(parsedValue)) === 'object' && parsedValue.hasOwnProperty(dynamicName)) {
+                        inputElement.val(parsedValue[dynamicName]);
                     }
                 }
 
@@ -304,6 +305,48 @@ var DynamicForms = function () {
             }
 
             return string;
+        }
+
+        /**
+         * This recursive function builds the deep value strings for use in filling process
+         *
+         * Examples:
+         *   * deepValues({foo: {en: 'foo en', de: 'foo de'}})
+         *      => {'foo.en': 'foo en', 'foo.de': 'foo de'}
+         *   * deepValues({foo: translations: {{en: 'foo en', de: 'foo de'}}})
+         *      => {'foo.translations.en': 'foo en', 'foo.translations.de': 'foo de'}
+         *
+         * @param deepValue
+         * @returns {*}
+         */
+
+    }, {
+        key: 'deepValues',
+        value: function deepValues(deepValue) {
+            if (deepValue === undefined || typeof deepValue === 'string') {
+                return deepValue;
+            }
+
+            var values = {};
+            for (var prop in deepValue) {
+                if (deepValue.hasOwnProperty(prop)) {
+                    if (typeof deepValue[prop] === 'string') {
+                        values[prop] = deepValue[prop];
+                    } else if (_typeof(deepValue[prop]) === 'object') {
+                        var deeperValue = DynamicForms.deepValues(deepValue[prop]);
+                        var deeperValues = {};
+                        for (var deepProp in deeperValue) {
+                            if (deeperValue.hasOwnProperty(deepProp)) {
+                                var key = prop + '.' + deepProp;
+                                deeperValues[key] = deeperValue[deepProp];
+                            }
+                        }
+                        return deeperValues;
+                    }
+                }
+            }
+
+            return values;
         }
     }]);
 
