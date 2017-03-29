@@ -283,14 +283,12 @@ class DynamicForms {
                     values[prop] = deepValue[prop];
                 } else if (typeof deepValue[prop] === 'object') {
                     let deeperValue = DynamicForms.deepValues(deepValue[prop]);
-                    let deeperValues = {};
                     for (let deepProp in deeperValue) {
                         if (deeperValue.hasOwnProperty(deepProp)) {
                             let key = prop + '.' + deepProp;
-                            deeperValues[key] = deeperValue[deepProp];
+                            values[key] = deeperValue[deepProp];
                         }
                     }
-                    return deeperValues;
                 }
             }
         }

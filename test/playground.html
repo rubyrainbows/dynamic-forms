@@ -80,8 +80,10 @@
 
     <div data-dynamic-form>
         <div data-dynamic-form-template="single_deep_fill"
-             data-dynamic-form-fill='{ "0": {"translations": { "en": "bar en", "de": "bar de" } } }'>
+             data-dynamic-form-fill='{ "0": {"single": "single", "translations": { "en": "bar en", "de": "bar de" } } }'>
             <label>
+                <input type="text" name="single_deep_fill[ID][single]"
+                       data-dynamic-form-input-id-template="ID" data-dynamic-form-input-name="single"/>
                 <input type="text" name="single_deep_fill[ID][translations][en]"
                        data-dynamic-form-input-id-template="ID" data-dynamic-form-input-name="translations.en"/>
                 <input type="text" name="single_deep_fill[ID][translations][de]"

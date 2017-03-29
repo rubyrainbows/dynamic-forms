@@ -142,6 +142,10 @@ describe('#dynamic forms', function () {
         expect(deeper['foo.translations.en']).to.eq('foo en');
         expect(deeper['foo.translations.de']).to.eq('foo de');
 
+        var deeperWithSingle = DynamicForms.deepValues({single: 'bar', foo: {'translations': {en: 'foo en 1', de: 'foo de 1'}}});
+        expect(deeperWithSingle['single']).to.eq('bar');
+        expect(deeperWithSingle['foo.translations.en']).to.eq('foo en 1');
+        expect(deeperWithSingle['foo.translations.de']).to.eq('foo de 1');
     });
 
     it('should allow for observers', function () {

@@ -334,14 +334,12 @@ var DynamicForms = function () {
                         values[prop] = deepValue[prop];
                     } else if (_typeof(deepValue[prop]) === 'object') {
                         var deeperValue = DynamicForms.deepValues(deepValue[prop]);
-                        var deeperValues = {};
                         for (var deepProp in deeperValue) {
                             if (deeperValue.hasOwnProperty(deepProp)) {
                                 var key = prop + '.' + deepProp;
-                                deeperValues[key] = deeperValue[deepProp];
+                                values[key] = deeperValue[deepProp];
                             }
                         }
-                        return deeperValues;
                     }
                 }
             }
