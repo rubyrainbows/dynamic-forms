@@ -1,7 +1,7 @@
 # Javascript Dynamic Forms
 
 [![Build Status](https://travis-ci.org/rubyrainbows/dynamic-forms.svg?branch=master)](https://travis-ci.org/rubyrainbows/dynamic-forms)
-[![npm version](https://badge.fury.io/js/%40rubyrainbows%2Fdynamic-forms.svg)](https://badge.fury.io/js/%40rubyrainbows%2Fdynamic-forms)
+[![npm version](https://badge.fury.io/js/dynamic-forms.svg)](https://badge.fury.io/js/dynamic-forms)
 
 Dynamic forms is a javascript library meant to help make normal HTML forms more dynamic.
 
